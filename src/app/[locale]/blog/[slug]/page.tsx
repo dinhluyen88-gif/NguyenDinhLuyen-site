@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, locales, site } from "@/content/site";
-import { formatDate, getAllPosts, getPost } from "@/lib/posts";
+import { formatDate, getAllPosts, getPost, getPostsForLocale } from "@/lib/posts";
+import { PostRow } from "@/components/ui";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -22,7 +23,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.excerpt,
     // Bài chỉ có một ngôn ngữ thì canonical trỏ về đúng ngôn ngữ đó.
     alternates: { canonical: `/${post.lang}/blog/${post.slug}/` },
-    openGraph: { type: "article", title: post.title, description: post.excerpt, publishedTime: post.date },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.date,
+      ...(post.coverPath ? { images: [{ url: post.coverPath }] } : {}),
+    },
   };
 }
 
@@ -32,6 +39,9 @@ export default async function PostPage({ params }: Props) {
   const post = getPost(slug);
   if (!post) notFound();
   const t = getDictionary(locale);
+  // "Đọc tiếp": ưu tiên bài cùng chủ đề, rồi đến các bài gần ngày nhất.
+  const others = getPostsForLocale(locale).filter((p) => p.key !== post.key);
+  const related = [...others.filter((p) => p.category === post.category), ...others.filter((p) => p.category !== post.category)].slice(0, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -41,6 +51,7 @@ export default async function PostPage({ params }: Props) {
     datePublished: post.date,
     inLanguage: post.lang,
     author: { "@type": "Person", name: site.name, url: site.linkedin },
+    ...(post.coverPath ? { image: new URL(post.coverPath.replace(/^\//, ""), site.url.replace(/\/?$/, "/")).toString() } : {}),
   };
 
   return (
@@ -75,6 +86,11 @@ export default async function PostPage({ params }: Props) {
           ) : null}
         </header>
 
+        {post.cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={post.cover} alt="" className="rise mt-10 aspect-[16/9] w-full object-cover" style={{ "--delay": "220ms" } as React.CSSProperties} />
+        ) : null}
+
         <div className="prose-article mt-10" dangerouslySetInnerHTML={{ __html: post.html }} />
 
         <footer className="mt-16 border-t border-ink pt-8" lang={locale}>
@@ -85,6 +101,17 @@ export default async function PostPage({ params }: Props) {
           </a>
         </footer>
       </div>
+
+      {related.length ? (
+        <section className="mx-auto mt-20 max-w-[60rem]" lang={locale}>
+          <p className="kicker">{t.writing.related}</p>
+          <ul className="mt-4 border-b border-rule">
+            {related.map((p, i) => (
+              <PostRow key={p.slug} post={p} locale={locale} index={i} />
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </article>
   );
 }
