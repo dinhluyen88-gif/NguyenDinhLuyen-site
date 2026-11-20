@@ -40,9 +40,12 @@ date: 2026-11-20
 category: dieu-hanh        # cong-nghe | dieu-hanh | cuoc-song
 lang: vi                   # vi | en
 excerpt: "Một hai câu tóm tắt hiện ở trang danh sách."
+cover: ten-anh.jpg   # ảnh bìa (không bắt buộc), đặt trong public/images/blog/
 ---
 
 Nội dung viết bằng Markdown.
+
+Chèn ảnh vào giữa bài: ![Chú thích hiện dưới ảnh](ten-anh.jpg)
 ```
 
 Bài có cả hai ngôn ngữ: tạo hai file, đặt cùng một giá trị `key:` ở cả hai. Mỗi bản sẽ hiện đúng ở trang ngôn ngữ của nó. Bài chỉ có tiếng Việt vẫn hiện ở trang tiếng Anh, kèm nhãn "In Vietnamese".
