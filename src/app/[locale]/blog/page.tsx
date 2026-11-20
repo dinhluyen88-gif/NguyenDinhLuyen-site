@@ -23,6 +23,10 @@ export default async function BlogPage({ params }: Props) {
   const t = getDictionary(locale);
   const posts = getPostsForLocale(locale);
   const used = [...new Set(posts.map((p) => p.category))];
+  // Nhóm theo năm, mới nhất ở trên.
+  const byYear: Record<string, typeof posts> = {};
+  for (const p of posts) (byYear[p.date.slice(0, 4)] ??= []).push(p);
+  const years = Object.keys(byYear).sort((a, b) => (a < b ? 1 : -1));
 
   return (
     <div className="container-page pt-14 md:pt-24">
@@ -40,17 +44,31 @@ export default async function BlogPage({ params }: Props) {
         <p className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-mute">
           <span className="kicker">{t.writing.topics}</span>
           {used.map((c) => (
-            <span key={c}>{t.categories[c] ?? c}</span>
+            <span key={c}>
+              {t.categories[c] ?? c} ({posts.filter((p) => p.category === c).length})
+            </span>
           ))}
         </p>
       )}
 
       {posts.length ? (
-        <ul className="mt-6 border-b border-rule">
-          {posts.map((p, i) => (
-            <PostRow key={p.slug} post={p} locale={locale} index={i} />
+        <div className="mt-6">
+          {years.map((year) => (
+            <section key={year} className="mt-10 first:mt-4" aria-labelledby={`y-${year}`}>
+              <h2 id={`y-${year}`} className="flex items-baseline gap-3 border-b border-ink pb-3">
+                <span className="font-display text-3xl md:text-4xl">{year}</span>
+                <span className="text-sm text-mute">
+                  {byYear[year].length} {t.writing.postsCount}
+                </span>
+              </h2>
+              <ul className="border-b border-rule [&>li:first-child]:border-t-0">
+                {byYear[year].map((p, i) => (
+                  <PostRow key={p.slug} post={p} locale={locale} index={i} />
+                ))}
+              </ul>
+            </section>
           ))}
-        </ul>
+        </div>
       ) : (
         <p className="mt-12 text-soft">{t.writing.empty}</p>
       )}
