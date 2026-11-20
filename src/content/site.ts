@@ -14,7 +14,7 @@ export const site = {
   name: "Nguyễn Đình Luyện",
   alias: "Louis",
   // Đổi thành tên miền thật khi đã có (dùng cho SEO và sitemap).
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
   linkedin: "https://www.linkedin.com/in/nguyendinhluyen/",
   // Để trống thì website không hiển thị email. Điền email công khai nếu muốn.
   email: "dinhluyen88@gmail.com",
