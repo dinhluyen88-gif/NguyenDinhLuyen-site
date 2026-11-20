@@ -19,7 +19,7 @@ export const site = {
   // Để trống thì website không hiển thị email. Điền email công khai nếu muốn.
   email: "dinhluyen88@gmail.com",
   // Đặt ảnh chân dung vào public/portrait.jpg rồi điền "/portrait.jpg".
-  portrait: "/portrait.jpg",
+  portrait: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/portrait.jpg`,
 };
 
 type Role = {
