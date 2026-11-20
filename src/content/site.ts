@@ -37,7 +37,7 @@ type Dictionary = {
   stats: { value: string; label: string }[];
   focus: { kicker: string; title: string; items: { title: string; body: string }[] };
   journey: { kicker: string; title: string; more: string };
-  writing: { kicker: string; title: string; all: string; empty: string; minutes: string; inVietnamese: string; back: string; translated: string; topics: string };
+  writing: { kicker: string; title: string; all: string; empty: string; minutes: string; inVietnamese: string; back: string; translated: string; topics: string; postsCount: string; related: string };
   press: { kicker: string; title: string; note: string; items: { outlet: string; date: string; title: string; note: string; href: string }[] };
   quote: { text: string; source: string };
   contact: { kicker: string; title: string; body: string; linkedin: string; email: string };
@@ -129,6 +129,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       empty: "Chưa có bài viết.",
       minutes: "phút đọc",
       inVietnamese: "Tiếng Việt",
+      postsCount: "bài",
+      related: "Đọc tiếp",
       back: "Tất cả bài viết",
       translated: "Bản dịch từ nguyên bản tiếng Việt",
       topics: "Chủ đề",
@@ -364,6 +366,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       empty: "No posts yet.",
       minutes: "min read",
       inVietnamese: "In Vietnamese",
+      postsCount: "posts",
+      related: "Keep reading",
       back: "All posts",
       translated: "Translated from the Vietnamese original",
       topics: "Topics",
