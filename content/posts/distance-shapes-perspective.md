@@ -1,6 +1,7 @@
 ---
 title: "Distance shapes perspective"
-date: 2023-11-16
+date: 2026-07-31
+cover: tateyama.jpg
 category: dieu-hanh
 lang: en
 key: khoang-cach-goc-nhin

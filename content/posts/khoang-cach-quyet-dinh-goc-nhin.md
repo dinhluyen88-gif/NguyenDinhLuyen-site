@@ -1,6 +1,7 @@
 ---
 title: "Khoảng cách quyết định góc nhìn"
-date: 2023-11-16
+date: 2026-07-31
+cover: tateyama.jpg
 category: dieu-hanh
 lang: vi
 key: khoang-cach-goc-nhin

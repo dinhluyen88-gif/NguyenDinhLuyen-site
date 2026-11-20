@@ -1,6 +1,7 @@
 ---
 title: "Chiến lược hay chỉ là Chiếc Lược?"
-date: 2023-11-20
+date: 2023-11-11
+cover: chien-luoc.jpg
 category: dieu-hanh
 lang: vi
 excerpt: "Ký kết chiến lược, hợp tác chiến lược, đối tác chiến lược. Trong một năm kinh tế hơi buồn, cái gì cũng được gọi là “chiến lược”. Vậy chiến lược thật sự là gì?"
