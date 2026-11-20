@@ -18,8 +18,35 @@ export type Post = {
   excerpt: string;
   translated: boolean;
   minutes: number;
+  // Ảnh bìa: tên file trong public/images/blog/ (hoặc đường dẫn bắt đầu bằng "/"). Có thể để trống.
+  cover?: string;
+  // Đường dẫn ảnh bìa không kèm basePath (dùng cho thẻ chia sẻ mạng xã hội).
+  coverPath?: string;
   html: string;
 };
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+// Đường dẫn ảnh: "abc.jpg" → /images/blog/abc.jpg ; "/x/y.jpg" giữ nguyên; luôn thêm basePath.
+export function imagePath(src: string): string {
+  if (/^https?:\/\//.test(src)) return src;
+  return src.startsWith("/") ? src : `/images/blog/${src}`;
+}
+
+export function imageUrl(src: string): string {
+  const path = imagePath(src);
+  return path.startsWith("/") ? `${BASE}${path}` : path;
+}
+
+// Ảnh trong bài viết bằng Markdown: ![chú thích](ten-anh.jpg) → hiện ảnh kèm chú thích bên dưới.
+function renderMarkdown(content: string): string {
+  const html = marked.parse(content, { async: false }) as string;
+  return html
+    .replace(/<p>\s*<img src="([^"]+)" alt="([^"]*)"\s*\/?>\s*<\/p>/g, (_m, src: string, alt: string) =>
+      `<figure><img src="${imageUrl(src)}" alt="${alt}" loading="lazy" />${alt ? `<figcaption>${alt}</figcaption>` : ""}</figure>`,
+    )
+    .replace(/<img src="([^"]+)"/g, (m, src: string) => (src.startsWith(BASE + "/") && BASE ? m : `<img src="${imageUrl(src)}"`));
+}
 
 function readPost(file: string): Post {
   const raw = fs.readFileSync(path.join(POSTS_DIR, file), "utf8");
@@ -35,7 +62,9 @@ function readPost(file: string): Post {
     excerpt: String(data.excerpt ?? ""),
     translated: Boolean(data.translated),
     minutes: Math.max(1, Math.round(readingTime(content).minutes)),
-    html: marked.parse(content, { async: false }) as string,
+    cover: data.cover ? imageUrl(String(data.cover)) : undefined,
+    coverPath: data.cover ? imagePath(String(data.cover)) : undefined,
+    html: renderMarkdown(content),
   };
 }
 
