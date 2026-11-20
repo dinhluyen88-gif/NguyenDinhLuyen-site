@@ -1,5 +1,6 @@
 # Mỗi lần push lên `main`: build website rồi đẩy bản tĩnh sang nhánh `deploy`.
 # Hostinger kéo nhánh `deploy` về public_html (hPanel > Advanced > Git).
+# Đồng thời build thêm một bản cho GitHub Pages (github.io/<tên-repo>/) và đẩy sang nhánh `gh-pages`.
 name: Build and publish
 
 on:
@@ -42,3 +43,22 @@ jobs:
           git add -A
           git commit -m "Deploy ${GITHUB_SHA}"
           git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" deploy
+
+      - name: Build for GitHub Pages
+        run: |
+          rm -rf out
+          npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+
+      - name: Publish `out/` to the gh-pages branch
+        run: |
+          cd out
+          touch .nojekyll
+          git init -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "GitHub Pages ${GITHUB_SHA}"
+          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
